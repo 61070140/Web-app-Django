@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!-- ------------------------------- All Restaurant -------------------------------------------- -->
+
+          <!-- ----------------------- If Search ------------------------- -->
+
+<div class="container mb-5" >
+  {% if search %}
+  <div class="row ">
+    {% for rest_type, rest in restaurant.items %}
+    {% for r in rest %}
+    <div class="col-sm-3 mt-1" style="width:16rem">
+      <div class="card shadow rounded mt-5" style="width: 16rem;">
+        <img class="card-img-top shadow " src="{{ r.picture.url }}" alt="Card imagecap" />
+        <div class="card-body d-flex flex-column ">
+          <p class="card-title text-center h4 font-weight-bolder">{{ r.name }}</p>
+          <p class="card-title text-center h5 text-muted">คณะ{{ r.faculty_id.name }}</p>
+          <hr>
+          <a href="/details/{{ r.id }}" class="btn btn-success mt-auto
+                    float-right mt-2">Menu</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% endfor %}
+  </div>
+  <br><br><br>
+  <a href="{% url 'index' %}" class="btn btn-warning btn-lg btn-block font-weight-bolder shadow" </a>กลับสู่หน้าหลัก</a>
+
+
+            <!-- ------------------- With out Search ----------------------- -->
+
+  {% else %}
+  {% for cl in faculty %}
+  <p class="h3 mt-5 name-rest" id="factitle">คณะ{{ cl.name }}
+    <a class="btn btn-warning btn-lg h5 float-right mr-5 shadow text-light" data-toggle="collapse" href="#{{cl}}"
+      role="button" aria-expanded="false" aria-controls="collapseExample">View all</a>
+  </p>
+  <br>
+  <div class="card-deck mt-2">
+    {% for rest_type, rest in restaurant.items %}
+    {% if rest_type == cl.id %}       <!-- แบ่งเป็นแต่ละคณะแยกกัน  -->
+    {% for r in rest|slice:":4" %}    <!-- แบ่งเป็น div ละ 4 card --> 
+
+    <div class="card shadow rounded" style="width: 18rem;">
+      <img class="card-img-top" src="{{ r.picture.url }}" alt="Card imagecap" />
+      <div class="card-body d-flex flex-column">
+        <p class="card-title text-center h4 font-weight-bolder">{{ r.name }}</p>
+        <hr>
+        <a href="/details/{{ r.id }}" class="btn btn-success mt-auto
+                  float-right shadow">Menu</a>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+  </div>
+  
+            <!-- --------------------- Collapse Part ----------------------- -->
+
+  <div class="collapse" id="{{cl}}">
+    <div class="card-deck mt-2">
+      {% for rest_type, rest in restaurant.items %}
+      {% if rest_type == cl.id %}
+      {% for r in rest|slice:"4:" %}
+      <div class="card shadow rounded" style="width: 18rem;">
+        <img class="card-img-top" src="{{ r.picture.url }}" alt="Card imagecap" />
+        <div class="card-body d-flex flex-column">
+          <p class="card-title text-center h4 font-weight-bolder">{{ r.name }}</p>
+          <hr>
+          <a href="/details/{{ r.id }}" class="btn btn-success mt-auto float-right">Menu</a>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  <br>
+
+            <!-- ----------------------- Admin Part ----------------------------->
+            
+  {% if user.is_authenticated %}
+  <center>
+    <a href="#" onclick="window.open('{% url 'admin_home' %}');"
+      class="btn btn-info btn-lg btn-block font-weight-bolder shadow">Manage</a>
+  </center>
+  {% endif %}
+
+
+</div>
+
+{% endblock %}
